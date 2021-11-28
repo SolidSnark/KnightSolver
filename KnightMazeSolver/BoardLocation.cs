@@ -50,11 +50,20 @@ namespace KnightMazeSolver
 
         public bool Equals(IBoardLocation boardLocation)
         {
-            return X == boardLocation.X && Y == boardLocation.Y;
+            return boardLocation != null && X == boardLocation.X && Y == boardLocation.Y;
         }
 
         public override bool Equals(BoardLocation x, BoardLocation y)
         {
+            if (x == null)
+            {
+                return (y == null);
+            }
+            else if (y == null)
+            {
+                return false;
+            }
+
             return x.Equals(y);
         }
 
@@ -68,6 +77,16 @@ namespace KnightMazeSolver
             hCode |= boardLocation.Y;       // hCode = XXXXXXXXYYYYYYYY
             
             return hCode.GetHashCode();
+        }
+
+        public override string ToString()
+        {
+            return ToString(this);
+        }
+
+        public static string ToString(IBoardLocation boardLocation)
+        {
+            return boardLocation == null ? "null" : $"({boardLocation.X},{boardLocation.Y})";
         }
     }
 }

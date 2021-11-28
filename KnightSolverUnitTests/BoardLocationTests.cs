@@ -1,5 +1,6 @@
 using NUnit.Framework;
-using Moq;
+
+using System.Collections.Generic;
 
 using KnightMazeSolver;
 
@@ -7,53 +8,47 @@ namespace KnightSolverUnitTests
 {
     public class BoardLocationTests
     {
+        private BoardLocation _tempLocation;
+
+        public static IEnumerable<TestCaseData> EqualsTestCases
+        {
+            get
+            {
+                yield return new TestCaseData(new BoardLocation(1, 2), new BoardLocation(2, 3), false);
+                yield return new TestCaseData(new BoardLocation(1, 2), null, false);
+                yield return new TestCaseData(null, new BoardLocation(1, 2), false);
+                yield return new TestCaseData(new BoardLocation(2, 3), new BoardLocation(2, 3), true);
+                yield return new TestCaseData(null, null, true);
+            }
+        }
+
+        [OneTimeSetUp]
+        public void Init()
+        {
+            _tempLocation = new BoardLocation(3, 3);
+        }
+
         [SetUp]
         public void Setup()
         {
-        }
-
-        [Test]
-        public void BoardLocation_Equals_Equal()
-        { 
-            // Setup
-            BoardLocation locationA = new BoardLocation(1, 2);
-            BoardLocation locationB = new BoardLocation(1, 2);
             
-            // Act/Assert
-            Assert.IsTrue(locationA.Equals(locationB), $"Result does not equal expected ({locationA.X},{locationA.Y}) != ({locationB.X},{locationB.Y})");
         }
 
-        [Test]
-        public void BoardLocation_AltEquals_Equal()
+        [TestCaseSource(nameof(EqualsTestCases))]
+        public void BoardLocation_Equals_Equal(BoardLocation boardLocationA, BoardLocation boardLocationB, bool expectedValue)
         {
-            // Setup
-            BoardLocation locationA = new BoardLocation(1, 2);
-            BoardLocation locationB = new BoardLocation(1, 2);
+            if (boardLocationA == null)
+                return;
 
             // Act/Assert
-            Assert.IsTrue(locationA.Equals(locationA, locationB), $"Result does not equal expected ({locationA.X},{locationA.Y}) != ({locationB.X},{locationB.Y})");
+            Assert.IsTrue(boardLocationA.Equals(boardLocationB) == expectedValue, $"Result does not equal expected {BoardLocation.ToString(boardLocationA)} != {BoardLocation.ToString(boardLocationB)}");
         }
-
-        [Test]
-        public void BoardLocation_Equals_NotEqual()
+        
+        [TestCaseSource(nameof(EqualsTestCases))]
+        public void BoardLocation_AltEquals_Equal(BoardLocation boardLocationA, BoardLocation boardLocationB, bool expectedValue)
         {
-            // Setup
-            BoardLocation locationA = new BoardLocation(1, 2);
-            BoardLocation locationB = new BoardLocation(3, 2);
-            
             // Act/Assert
-            Assert.IsFalse(locationA.Equals(locationB), $"Result does not equal expected ({locationA.X},{locationA.Y}) == ({locationB.X},{locationB.Y})");
-        }
-
-        [Test]
-        public void BoardLocation_AltEquals_NotEqual()
-        {
-            // Setup
-            BoardLocation locationA = new BoardLocation(1, 2);
-            BoardLocation locationB = new BoardLocation(3, 2);
-
-            // Act/Assert
-            Assert.IsFalse(locationA.Equals(locationA, locationB), $"Result does not equal expected ({locationA.X},{locationA.Y}) == ({locationB.X},{locationB.Y})");
+            Assert.IsTrue(_tempLocation.Equals(boardLocationA, boardLocationB) == expectedValue, $"Result does not equal expected {BoardLocation.ToString(boardLocationA)} != {BoardLocation.ToString(boardLocationB)}");
         }
 
         [Test]

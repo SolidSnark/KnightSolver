@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+
+using System.Collections.Generic;
 
 namespace KnightMazeSolver
 {
@@ -10,27 +12,57 @@ namespace KnightMazeSolver
         /// <summary>
         /// The knight's location before the move
         /// </summary>
-        IBoardLocation StartingLocation { get; set; }
+        IBoardLocation StartingLocation { get; }
         
         /// <summary>
         /// The knight's location after the move
         /// </summary>
-        IBoardLocation EndingLocation { get; set; }        
+        IBoardLocation EndingLocation { get; }
+
+        /// <summary>
+        /// Tests another move for equality 
+        /// </summary>
+        /// <param name="move">The move to compare to the current one</param>
+        /// <returns>True if the moves are equal</returns>
+        bool Equals(IMove move);
     }
 
     public class Move : EqualityComparer<Move>, IMove
     {
-        public IBoardLocation StartingLocation { get; set; }
-        public IBoardLocation EndingLocation { get; set; }
+        public IBoardLocation StartingLocation { get; internal set; }
+        public IBoardLocation EndingLocation { get; internal set; }
 
         public Move(IBoardLocation startingLocation, IBoardLocation endingLocation)
         {
+            if (startingLocation == null)
+            {
+                throw new ArgumentNullException("Starting location must not be null");
+            }
+
+            if (endingLocation == null)
+            {
+                throw new ArgumentNullException("Ending location must not be null");
+            }
+
             StartingLocation = startingLocation;
             EndingLocation = endingLocation;
+        }
+        public bool Equals(IMove move)
+        {
+            return move != null && StartingLocation.Equals(move.StartingLocation) && EndingLocation.Equals(move.EndingLocation);
         }
 
         public override bool Equals(Move x, Move y)
         {
+            if (x == null)
+            {
+                return (y == null);
+            }
+            else if (y == null)
+            {
+                return false;
+            }
+
             return x.StartingLocation.Equals(y.StartingLocation) && x.EndingLocation.Equals(y.EndingLocation);
         }
 
@@ -50,6 +82,16 @@ namespace KnightMazeSolver
             hCode |= move.EndingLocation.Y;        // hCode = XXXXXXXXYYYYYYYYWWWWWWWWZZZZZZZZ
 
             return hCode.GetHashCode();
+        }
+
+        public override string ToString()
+        { 
+            return $"{BoardLocation.ToString(StartingLocation)} => {BoardLocation.ToString(EndingLocation)}";
+        }
+
+        public static string ToString(IMove move)
+        {
+            return move == null ? "null" : $"{BoardLocation.ToString(move.StartingLocation)} => {BoardLocation.ToString(move.EndingLocation)}";
         }
     }
 }

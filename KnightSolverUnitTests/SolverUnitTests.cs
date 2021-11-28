@@ -24,7 +24,7 @@ namespace KnightSolverUnitTests
         {
             ISolver solver = new Solver();
             
-            List<List<IMove>> solutions = solver.Solve(@".\TestMazes\SimpleTestMaze.txt");
+            List<List<IMove>> solutions = solver.Solve(@".\TestMazes\SimpleTestMaze.txt", SolveType.Full);
             Assert.IsTrue(solutions.Count == 1, "Unexpected number of solutions");
             Assert.IsTrue(solutions[0].Count == 2, "Solution has unexpected number of moves");
         }
@@ -35,9 +35,9 @@ namespace KnightSolverUnitTests
             _fileSystemMock.Setup(f => f.File.Exists(It.IsAny<string>())).Returns(false);
 
             ISolver solver = new Solver();
-            Assert.Throws<Exception>(() => solver.Solve(@"F:\\Does\Not\Exist"), "Failed to throw an exception on non-existant file");
+            Assert.Throws<Exception>(() => solver.Solve(@"F:\\Does\Not\Exist", SolveType.Full), "Failed to throw an exception on non-existant file");
         }
-        
+
         [Test]
         public void Solver_SolveFile_ReadAllLinesThrows()
         {
@@ -45,13 +45,12 @@ namespace KnightSolverUnitTests
             _fileSystemMock.Setup(f => f.File.ReadAllLines(It.IsAny<string>())).Throws(new Exception());
 
             ISolver solver = new Solver();
-            Assert.Throws<Exception>(() => solver.Solve(@"F:\\TestFile"), "Failed to throw an exception on read error");
+            Assert.Throws<Exception>(() => solver.Solve(@"F:\\TestFile", SolveType.Full), "Failed to throw an exception on read error");
         }
 
         [Test]
-        public void Solver_Solve_Success()
+        public void Solver_Solve_FindFirst()
         {
-  
             ISolver solver = new Solver();
 
             string[] rows = new string[] {
@@ -69,19 +68,38 @@ namespace KnightSolverUnitTests
                 "X...........XXXX...X.X...X.X.X.X.XX..XXX..",
                 "XX.XXXXXXXX.X..X...X...X......XX...XXX.X.S"
             };
-            //board.LoadStateData(rows);
-            List<List<IMove>> solutions = solver.Solve(rows);
-            int shortestSolution = int.MaxValue;
-            foreach (List<IMove> solution in solutions)
-            {
-                if (solution.Count < shortestSolution)
-                {
-                    shortestSolution = solution.Count;
-                }
-            }
+            
+            List<List<IMove>> solutions = solver.Solve(rows, SolveType.First);
 
-            int y = 5;
+            Assert.IsTrue(solutions.Count == 1, "Unexpected number of solutions");
+            Assert.IsTrue(solutions[0].Count == 59, "Solution has unexpected number of moves");
         }
 
+        [Test]
+        public void Solver_Solve_FindShortest()
+        {
+            ISolver solver = new Solver();
+
+            string[] rows = new string[] {
+                "EXXXXXXXXXX.XX.X....X....X.........X...X..",
+                ".............X.X.X.....X.........X...X...X",
+                ".XXXXXXXXXXXX....X...X...XX..X.X..X.X...X.",
+                "................X..........X.X.X........X.",
+                ".XX.X.X.X..XX...X..XX..X...X......X.X.X...",
+                "............X....XX..X.....X...XX.........",
+                "XXX.XX.XXX.XX..........XX..X.X..X..X...XXX",
+                "...............X........XXX..X..X..X...X..",
+                "XXXXXXXXXXX.X.....X.XX...........X...X.XX.",
+                "................X.X....X.........X...X..X.",
+                "XX.XX.XXXXXXX...X.X..X...X.X.X............",
+                "X...........XXXX...X.X...X.X.X.X.XX..XXX..",
+                "XX.XXXXXXXX.X..X...X...X......XX...XXX.X.S"
+            };
+
+            List<List<IMove>> solutions = solver.Solve(rows, SolveType.Shortest);
+
+            Assert.IsTrue(solutions.Count == 1, "Unexpected number of solutions");
+            Assert.IsTrue(solutions[0].Count == 41, "Solution has unexpected number of moves");
+        }
     }
 }

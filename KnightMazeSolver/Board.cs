@@ -145,6 +145,11 @@ namespace KnightMazeSolver
                     throw new ArgumentOutOfRangeException($"Starting Location ({value.X},{value.Y}) Out of Range");
                 }
 
+                if (value.Equals(EndingLocation))
+                {
+                    throw new ArgumentException($"Starting Location ({value.X},{value.Y}) cannot equal ending location");
+                }
+
                 this[value] = GetSquareColor(value);                
                 _startingLocation = value;
             }
@@ -161,6 +166,11 @@ namespace KnightMazeSolver
                 if (!IsSquareInBounds(value))
                 {
                     throw new ArgumentOutOfRangeException($"Ending Location ({value.X},{value.Y}) Out of Range");
+                }
+
+                if (value.Equals(StartingLocation))
+                {
+                    throw new ArgumentException($"Ending Location ({value.X},{value.Y}) cannot equal starting location");
                 }
 
                 this[value] = GetSquareColor(value); 

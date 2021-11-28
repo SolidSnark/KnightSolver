@@ -1,6 +1,8 @@
 using NUnit.Framework;
 using Moq;
+
 using System;
+using System.Collections.Generic;
 using System.IO;
 
 using KnightMazeSolver;
@@ -11,34 +13,43 @@ namespace KnightSolverUnitTests
     {
         Mock<IKnight> _knightMock = null;
 
-        private static readonly object[] OutOfRangeTestCases =
+        public static IEnumerable<TestCaseData> OutOfRangeTestCases
         {
-            new object[] { new BoardLocation(0, 1) },
-            new object[] { new BoardLocation(1, 0) },
-            new object[] { new BoardLocation(6, 1) },
-            new object[] { new BoardLocation(1, 6) }
-        };
+            get
+            {
+                yield return new TestCaseData(new BoardLocation(0, 1));
+                yield return new TestCaseData(new BoardLocation(1, 0));
+                yield return new TestCaseData(new BoardLocation(6, 1));
+                yield return new TestCaseData(new BoardLocation(1, 6));
+            }
+        }
 
-        private static readonly object[] InRangeTestCases =
+        public static IEnumerable<TestCaseData> InRangeTestCases
         {
-            new object[] { new BoardLocation(1, 1) },
-            new object[] { new BoardLocation(5, 1) },
-            new object[] { new BoardLocation(3, 3) },
-            new object[] { new BoardLocation(1, 5) },
-            new object[] { new BoardLocation(5, 5) }
-        };
+            get
+            {
+                yield return new TestCaseData(new BoardLocation(1, 1));
+                yield return new TestCaseData(new BoardLocation(5, 1));
+                yield return new TestCaseData(new BoardLocation(3, 3));
+                yield return new TestCaseData(new BoardLocation(1, 5));
+                yield return new TestCaseData(new BoardLocation(5, 5));
+            } 
+        }
 
-        private static readonly object[] KnightMoveTestCases =
+        public static IEnumerable<TestCaseData> KnightMoveTestCases
         {
-            new object[] { new BoardLocation(2, 1) },
-            new object[] { new BoardLocation(4, 1) },
-            new object[] { new BoardLocation(1, 2) },
-            new object[] { new BoardLocation(5, 2) },
-            new object[] { new BoardLocation(1, 4) },
-            new object[] { new BoardLocation(5, 4) },
-            new object[] { new BoardLocation(2, 5) },
-            new object[] { new BoardLocation(4, 5) }
-        };
+            get
+            {
+                yield return new TestCaseData(new BoardLocation(2, 1));
+                yield return new TestCaseData(new BoardLocation(4, 1));
+                yield return new TestCaseData(new BoardLocation(1, 2));
+                yield return new TestCaseData(new BoardLocation(5, 2));
+                yield return new TestCaseData(new BoardLocation(1, 4));
+                yield return new TestCaseData(new BoardLocation(5, 4));
+                yield return new TestCaseData(new BoardLocation(2, 5));
+                yield return new TestCaseData(new BoardLocation(4, 5));
+            }
+        }
 
         private static readonly SquareColor[,] _emptyBoardData = new SquareColor[5, 5]
         {
@@ -73,7 +84,7 @@ namespace KnightSolverUnitTests
             _knightMock = new Mock<IKnight>(MockBehavior.Strict);
         }
 
-        [TestCaseSource("InRangeTestCases")]
+        [TestCaseSource(nameof(InRangeTestCases))]
         public void Board_StartingLocationSet_Success(IBoardLocation boardLocation)
         {
             IBoard board = CreateBoard(5, 5);
@@ -82,7 +93,17 @@ namespace KnightSolverUnitTests
             Assert.AreEqual(board.StartingLocation, boardLocation, $"Setting starting location to {boardLocation.X},{boardLocation.Y} Failed");
         }
 
-        [TestCaseSource("OutOfRangeTestCases")]
+        [TestCaseSource(nameof(InRangeTestCases))]
+        public void Board_StartingLocationSet_EqualsEndingLocation(IBoardLocation boardLocation)
+        {
+            IBoard board = CreateBoard(5, 5);
+            board.EndingLocation = boardLocation;
+
+            Assert.Throws<ArgumentException>(() => board.StartingLocation = boardLocation,
+                $"Failed to throw Exception for starting location ({boardLocation.X},{boardLocation.Y}) equal to ending location");
+        }
+
+        [TestCaseSource(nameof(OutOfRangeTestCases))]
         public void Board_StartingLocationSet_OutOfRange(IBoardLocation boardLocation)
         {
             IBoard board = CreateBoard(5, 5);
@@ -91,7 +112,7 @@ namespace KnightSolverUnitTests
                 $"Failed to throw Exception for out of range starting location ({boardLocation.X},{boardLocation.Y})");
         }
 
-        [TestCaseSource("InRangeTestCases")]
+        [TestCaseSource(nameof(InRangeTestCases))]
         public void Board_EndingLocationSet_Success(IBoardLocation boardLocation)
         {
             IBoard board = CreateBoard(5, 5);
@@ -100,7 +121,17 @@ namespace KnightSolverUnitTests
             Assert.AreEqual(board.EndingLocation, boardLocation, $"Setting ending location to {boardLocation.X},{boardLocation.Y} Failed");
         }
 
-        [TestCaseSource("OutOfRangeTestCases")]
+        [TestCaseSource(nameof(InRangeTestCases))]
+        public void Board_EndingLocationSet_EqualsStartingLocation(IBoardLocation boardLocation)
+        {
+            IBoard board = CreateBoard(5, 5);
+            board.StartingLocation = boardLocation;
+
+            Assert.Throws<ArgumentException>(() => board.EndingLocation = boardLocation,
+                $"Failed to throw Exception for ending location ({boardLocation.X},{boardLocation.Y}) equal to starting location");
+        }
+
+        [TestCaseSource(nameof(OutOfRangeTestCases))]
         public void Board_EndingLocationSet_OutOfRange(IBoardLocation boardLocation)
         {
             IBoard board = CreateBoard(5, 5);
@@ -122,7 +153,7 @@ namespace KnightSolverUnitTests
             Assert.AreEqual(board._boardData.Length, 5 * 5, "BoardData length does not equal expected");
         }
 
-        [TestCaseSource("OutOfRangeTestCases")]
+        [TestCaseSource(nameof(OutOfRangeTestCases))]
         public void Board_Initialize_OutOfRange(IBoardLocation boardLocation)
         {
             _knightMock.Setup(i => i.Initialize(It.IsAny<Board>()));
@@ -376,7 +407,7 @@ namespace KnightSolverUnitTests
             Assert.Throws<InvalidDataException>(() => board.LoadStateData(rows), "Too many ending postitions in board data failed to cause Exeception");
         }
 
-        [TestCaseSource("InRangeTestCases")]
+        [TestCaseSource(nameof(InRangeTestCases))]
         public void Board_SetSquareStateWhite_Success(IBoardLocation boardLocation)
         {
             Board board = (Board)CreateBoard(5, 5, _emptyBoardData);
@@ -386,7 +417,7 @@ namespace KnightSolverUnitTests
                 $"Failed to set square at ({boardLocation.X},{boardLocation.Y})");
         }
 
-        [TestCaseSource("InRangeTestCases")]
+        [TestCaseSource(nameof(InRangeTestCases))]
         public void Board_SetSquareStateBlack_Success(IBoardLocation boardLocation)
         {
             Board board = (Board)CreateBoard(5, 5, _emptyBoardData);
@@ -396,7 +427,7 @@ namespace KnightSolverUnitTests
                 $"Failed to set square at ({boardLocation.X},{boardLocation.Y})");
         }
 
-        [TestCaseSource("InRangeTestCases")]
+        [TestCaseSource(nameof(InRangeTestCases))]
         public void Board_SetSquareStateVoid_Success(IBoardLocation boardLocation)
         {
             Board board = (Board)CreateBoard(5, 5, _checkerboardBoardData);
@@ -406,7 +437,7 @@ namespace KnightSolverUnitTests
                 $"Failed to set square at ({boardLocation.X},{boardLocation.Y})");
         }
 
-        [TestCaseSource("OutOfRangeTestCases")]
+        [TestCaseSource(nameof(OutOfRangeTestCases))]
         public void Board_SetSquareState_OutOfRange(IBoardLocation boardLocation)
         {
             Board board = (Board)CreateBoard(5, 5, _checkerboardBoardData);
@@ -425,7 +456,7 @@ namespace KnightSolverUnitTests
             Assert.AreEqual(board[3, 3], SquareColor.White, "BoardData does not equal expected (SquareColor.White)");
         }
 
-        [TestCaseSource("OutOfRangeTestCases")]
+        [TestCaseSource(nameof(OutOfRangeTestCases))]
         public void Board_GetSquareState_OutOfRange(IBoardLocation boardLocation)
         {
             Board board = (Board)CreateBoard(5, 5, _knightMovesdBoardData);
@@ -435,7 +466,7 @@ namespace KnightSolverUnitTests
                 $"Failed to throw Exception for out of range location ({boardLocation.X},{boardLocation.Y})");
         }
 
-        [TestCaseSource("InRangeTestCases")]
+        [TestCaseSource(nameof(InRangeTestCases))]
         public void Board_IsSquareInBounds_True_Success(IBoardLocation boardLocation)
         {
             Board board = (Board)CreateBoard(5, 5, _knightMovesdBoardData);
@@ -451,7 +482,7 @@ namespace KnightSolverUnitTests
             Assert.IsFalse(board.IsSquareInBounds(null), $"Expected false on null reference");
         }
 
-        [TestCaseSource("OutOfRangeTestCases")]
+        [TestCaseSource(nameof(OutOfRangeTestCases))]
         public void Board_IsSquareInBounds_OutOfRange(IBoardLocation boardLocation)
         {
             Board board = (Board)CreateBoard(5, 5, _knightMovesdBoardData);
@@ -475,7 +506,7 @@ namespace KnightSolverUnitTests
             Assert.IsFalse(board.IsSquareInBounds(new BoardLocation(1, 0)), $"Expected false at location (1,0)");
         }
 
-        [TestCaseSource("KnightMoveTestCases")]
+        [TestCaseSource(nameof(KnightMoveTestCases))]
         public void Board_IsTargetValidSquare_True_Success(IBoardLocation boardLocation)
         {
             Board board = (Board)CreateBoard(5, 5, _knightMovesdBoardData);
@@ -483,7 +514,7 @@ namespace KnightSolverUnitTests
             Assert.IsTrue(board.IsValidTargetSquare(boardLocation), $"Expected true at location ({boardLocation.X},{boardLocation.Y})");
         }
 
-        [TestCaseSource("KnightMoveTestCases")]
+        [TestCaseSource(nameof(KnightMoveTestCases))]
         public void Board_IsValidTargetSquare_False_Success(IBoardLocation boardLocation)
         {
             Board board = (Board)CreateBoard(5, 5, _emptyBoardData);
@@ -491,7 +522,7 @@ namespace KnightSolverUnitTests
             Assert.IsFalse(board.IsValidTargetSquare(boardLocation), $"Expected false at location ({boardLocation.X},{boardLocation.Y})");
         }
 
-        [TestCaseSource("OutOfRangeTestCases")]
+        [TestCaseSource(nameof(OutOfRangeTestCases))]
         public void Board_IsValidTargetSquare_OutOfRange(IBoardLocation boardLocation)
         {
             Board board = (Board)CreateBoard(5, 5, _knightMovesdBoardData);

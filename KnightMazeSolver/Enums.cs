@@ -6,4 +6,11 @@
         White,
         Black
     }
+
+    public enum SolveType
+    {
+        Full,
+        First,
+        Shortest
+    }
 }

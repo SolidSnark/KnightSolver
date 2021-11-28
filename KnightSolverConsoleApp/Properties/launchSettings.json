@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "KnightSolverConsoleApp": {
+      "commandName": "Project",
+      "commandLineArgs": "solve -f ..\\..\\..\\..\\KnightSolverUnitTests\\TestMazes\\SimpleTestMaze.txt -a"
+    }
+  }
+}
