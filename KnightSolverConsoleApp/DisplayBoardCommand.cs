@@ -36,46 +36,10 @@ namespace KnightSolverConsoleApp
                 throw new Exception($"File {request.Filename} does not exist.");
             }
 
-            char blackSquareChar = request.Monochrome ? 'X' : 'B';
-            char whiteSquareChar = request.Monochrome ? 'X' : 'W';
-
             board.LoadStateData(File.ReadAllLines(request.Filename));
 
-            for (byte y = 1;  y <= board.Height; y++)
-            {
-                StringBuilder sb = new StringBuilder();
-
-                for (byte x = 1; x <= board.Width; x++)
-                {
-                    if (board.StartingLocation.Equals(new BoardLocation(x, y)))
-                    {
-                        sb.Append('S');
-                    }
-                    else if (board.EndingLocation.Equals(new BoardLocation(x, y)))
-                    {
-                        sb.Append('E');
-                    }
-                    else
-                    {
-                        switch (board[x, y])
-                        {
-                            case SquareColor.Void:
-                                sb.Append('.');
-                                break;
-
-                            case SquareColor.Black:
-                                sb.Append(blackSquareChar);
-                                break;
-
-                            case SquareColor.White:
-                                sb.Append(whiteSquareChar);
-                                break;
-                        }
-                    }
-                }
-
-                Console.WriteLine(sb.ToString());
-            }
+            ITextRenderer textRenderer = new TextRenderer();
+            textRenderer.RenderBoard(board, request.Monochrome);
                         
             return await Task.FromResult(0);
         }

@@ -71,7 +71,7 @@ namespace KnightSolverUnitTests
             Knight knight = new Knight();
             knight.Initialize(_boardMock.Object);
 
-            Assert.AreEqual(knight.ValidMoves.Count, 8);
+            Assert.That(knight.ValidMoves.Count, Is.EqualTo(8), "HACK HACK");
             Assert.IsNotNull(knight.ValidMoves.Find(l => l.X == boardLocation.X && l.Y == boardLocation.Y), 
                 $"Valid move ({boardLocation.X},{boardLocation.Y}) is missing");
         }
@@ -84,7 +84,7 @@ namespace KnightSolverUnitTests
             Knight knight = new Knight();
             knight.Initialize(_boardMock.Object);
 
-            Assert.AreEqual(knight.ValidMoves.Count, 0);
+            Assert.That(knight.ValidMoves.Count, Is.EqualTo(0));
         }
 
         [Test]
@@ -95,8 +95,8 @@ namespace KnightSolverUnitTests
             Knight knight = new Knight();
             knight.Initialize(_boardMock.Object);
 
-            Assert.AreEqual(knight.BoardLocation.X, 3, $"X Location ({knight.BoardLocation.X}) does not equal expected");
-            Assert.AreEqual(knight.BoardLocation.Y, 3, $"Y Location ({knight.BoardLocation.Y}) does not equal expected");
+            Assert.That(knight.BoardLocation.X, Is.EqualTo(3), $"X Location ({knight.BoardLocation.X}) does not equal expected");
+            Assert.That(knight.BoardLocation.Y, Is.EqualTo(3), $"Y Location ({knight.BoardLocation.Y}) does not equal expected");
         }
 
         [Test]

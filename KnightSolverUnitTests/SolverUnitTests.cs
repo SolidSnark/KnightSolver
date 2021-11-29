@@ -25,8 +25,8 @@ namespace KnightSolverUnitTests
             ISolver solver = new Solver();
             
             List<List<IMove>> solutions = solver.Solve(@".\TestMazes\SimpleTestMaze.txt", SolveType.Full);
-            Assert.IsTrue(solutions.Count == 1, "Unexpected number of solutions");
-            Assert.IsTrue(solutions[0].Count == 2, "Solution has unexpected number of moves");
+            Assert.That(solutions.Count, Is.EqualTo(1), "Unexpected number of solutions");
+            Assert.That(solutions[0].Count, Is.EqualTo(2), "Solution has unexpected number of moves");
         }
 
         [Test]
@@ -71,8 +71,8 @@ namespace KnightSolverUnitTests
             
             List<List<IMove>> solutions = solver.Solve(rows, SolveType.First);
 
-            Assert.IsTrue(solutions.Count == 1, "Unexpected number of solutions");
-            Assert.IsTrue(solutions[0].Count == 59, "Solution has unexpected number of moves");
+            Assert.That(solutions.Count, Is.EqualTo(1), "Unexpected number of solutions");
+            Assert.That(solutions[0].Count, Is.EqualTo(59), "Solution has unexpected number of moves");
         }
 
         [Test]
@@ -98,8 +98,8 @@ namespace KnightSolverUnitTests
 
             List<List<IMove>> solutions = solver.Solve(rows, SolveType.Shortest);
 
-            Assert.IsTrue(solutions.Count == 1, "Unexpected number of solutions");
-            Assert.IsTrue(solutions[0].Count == 41, "Solution has unexpected number of moves");
+            Assert.That(solutions.Count, Is.EqualTo(1), "Unexpected number of solutions");
+            Assert.That(solutions[0].Count, Is.EqualTo(41), "Solution has unexpected number of moves");
         }
     }
 }

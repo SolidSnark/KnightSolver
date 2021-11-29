@@ -90,7 +90,7 @@ namespace KnightSolverUnitTests
             IBoard board = CreateBoard(5, 5);
 
             Assert.DoesNotThrow(() => board.StartingLocation = boardLocation, $"Exception setting starting location to ({boardLocation.X},{boardLocation.Y})");
-            Assert.AreEqual(board.StartingLocation, boardLocation, $"Setting starting location to {boardLocation.X},{boardLocation.Y} Failed");
+            Assert.That(board.StartingLocation, Is.EqualTo(boardLocation), $"Setting starting location to {boardLocation.X},{boardLocation.Y} Failed");
         }
 
         [TestCaseSource(nameof(InRangeTestCases))]
@@ -118,7 +118,7 @@ namespace KnightSolverUnitTests
             IBoard board = CreateBoard(5, 5);
 
             Assert.DoesNotThrow(() => board.EndingLocation = boardLocation, $"Exception setting ending location to ({boardLocation.X},{boardLocation.Y})");
-            Assert.AreEqual(board.EndingLocation, boardLocation, $"Setting ending location to {boardLocation.X},{boardLocation.Y} Failed");
+            Assert.That(board.EndingLocation, Is.EqualTo(boardLocation), $"Setting ending location to {boardLocation.X},{boardLocation.Y} Failed");
         }
 
         [TestCaseSource(nameof(InRangeTestCases))]
@@ -148,9 +148,9 @@ namespace KnightSolverUnitTests
 
             board.Initialize(5, 5);
 
-            Assert.AreEqual(board.Width, 5, "Width does not equal expected");
-            Assert.AreEqual(board.Height, 5, "Height does not equal expected");
-            Assert.AreEqual(board._boardData.Length, 5 * 5, "BoardData length does not equal expected");
+            Assert.That(board.Width, Is.EqualTo(5), "Width does not equal expected");
+            Assert.That(board.Height, Is.EqualTo(5), "Height does not equal expected");
+            Assert.That(board._boardData.Length, Is.EqualTo(5 * 5), "BoardData length does not equal expected");
         }
 
         [TestCaseSource(nameof(OutOfRangeTestCases))]
@@ -184,9 +184,9 @@ namespace KnightSolverUnitTests
 
             _knightMock.Verify(k => k.Initialize(It.IsAny<IBoard>()));
 
-            Assert.AreEqual(board.Width, 5, "Width does not equal expected");
-            Assert.AreEqual(board.Height, 5, "Height does not equal expected");
-            Assert.AreEqual(board._boardData.Length, 5 * 5, "BoardData length does not equal expected");
+            Assert.That(board.Width, Is.EqualTo(5), "Width does not equal expected");
+            Assert.That(board.Height, Is.EqualTo(5), "Height does not equal expected");
+            Assert.That(board._boardData.Length, Is.EqualTo(5 * 5), "BoardData length does not equal expected");
             Assert.True(board.StartingLocation.Equals(testStartingLocation), "Starting location does not equal expected");
             Assert.True(board.EndingLocation.Equals(testEndingLocation), "Ending location does not equal expected");
             Assert.True(CompareBoards(5, 5, _knightMovesdBoardData, board._boardData), "BoardData does not equal expected");
@@ -413,7 +413,7 @@ namespace KnightSolverUnitTests
             Board board = (Board)CreateBoard(5, 5, _emptyBoardData);
             
             board[boardLocation] = SquareColor.White;
-            Assert.AreEqual(board._boardData[boardLocation.X - 1, boardLocation.Y - 1], SquareColor.White,
+            Assert.That(board._boardData[boardLocation.X - 1, boardLocation.Y - 1], Is.EqualTo(SquareColor.White),
                 $"Failed to set square at ({boardLocation.X},{boardLocation.Y})");
         }
 
@@ -423,7 +423,7 @@ namespace KnightSolverUnitTests
             Board board = (Board)CreateBoard(5, 5, _emptyBoardData);
 
             board[boardLocation] = SquareColor.Black;
-            Assert.AreEqual(board._boardData[boardLocation.X - 1, boardLocation.Y - 1], SquareColor.Black,
+            Assert.That(board._boardData[boardLocation.X - 1, boardLocation.Y - 1], Is.EqualTo(SquareColor.Black),
                 $"Failed to set square at ({boardLocation.X},{boardLocation.Y})");
         }
 
@@ -433,7 +433,7 @@ namespace KnightSolverUnitTests
             Board board = (Board)CreateBoard(5, 5, _checkerboardBoardData);
 
             board[boardLocation] = SquareColor.White;
-            Assert.AreEqual(board._boardData[boardLocation.X - 1, boardLocation.Y - 1], SquareColor.White,
+            Assert.That(board._boardData[boardLocation.X - 1, boardLocation.Y - 1], Is.EqualTo(SquareColor.White),
                 $"Failed to set square at ({boardLocation.X},{boardLocation.Y})");
         }
 
@@ -451,9 +451,9 @@ namespace KnightSolverUnitTests
         {
             Board board = (Board)CreateBoard(5, 5, _knightMovesdBoardData);
 
-            Assert.AreEqual(board[1, 1], SquareColor.Void, "BoardData does not equal expected (SquareColor.Void)");
-            Assert.AreEqual(board[4, 5], SquareColor.Black, "BoardData does not equal expected (SquareColor.Black)");
-            Assert.AreEqual(board[3, 3], SquareColor.White, "BoardData does not equal expected (SquareColor.White)");
+            Assert.That(board[1, 1], Is.EqualTo(SquareColor.Void), "BoardData does not equal expected (SquareColor.Void)");
+            Assert.That(board[4, 5], Is.EqualTo(SquareColor.Black), "BoardData does not equal expected (SquareColor.Black)");
+            Assert.That(board[3, 3], Is.EqualTo(SquareColor.White), "BoardData does not equal expected (SquareColor.White)");
         }
 
         [TestCaseSource(nameof(OutOfRangeTestCases))]

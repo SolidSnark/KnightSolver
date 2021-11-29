@@ -22,6 +22,7 @@ namespace KnightSolverUnitTests
             }
         }
 
+
         [OneTimeSetUp]
         public void Init()
         {
@@ -37,18 +38,18 @@ namespace KnightSolverUnitTests
         [TestCaseSource(nameof(EqualsTestCases))]
         public void BoardLocation_Equals_Equal(BoardLocation boardLocationA, BoardLocation boardLocationB, bool expectedValue)
         {
-            if (boardLocationA == null)
+            if (boardLocationA == null) // This is a hack.  NUnit TestCaseSource was giving me fits.  This is a workaround.
                 return;
 
             // Act/Assert
-            Assert.IsTrue(boardLocationA.Equals(boardLocationB) == expectedValue, $"Result does not equal expected {BoardLocation.ToString(boardLocationA)} != {BoardLocation.ToString(boardLocationB)}");
+            Assert.That(boardLocationA.Equals(boardLocationB), Is.EqualTo(expectedValue), $"Result does not equal expected {BoardLocation.ToString(boardLocationA)} != {BoardLocation.ToString(boardLocationB)}");            
         }
         
         [TestCaseSource(nameof(EqualsTestCases))]
         public void BoardLocation_AltEquals_Equal(BoardLocation boardLocationA, BoardLocation boardLocationB, bool expectedValue)
         {
             // Act/Assert
-            Assert.IsTrue(_tempLocation.Equals(boardLocationA, boardLocationB) == expectedValue, $"Result does not equal expected {BoardLocation.ToString(boardLocationA)} != {BoardLocation.ToString(boardLocationB)}");
+            Assert.That(_tempLocation.Equals(boardLocationA, boardLocationB), Is.EqualTo(expectedValue), $"Result does not equal expected {BoardLocation.ToString(boardLocationA)} != {BoardLocation.ToString(boardLocationB)}");
         }
 
         [Test]

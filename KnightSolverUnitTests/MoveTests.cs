@@ -53,14 +53,14 @@ namespace KnightSolverUnitTests
         [TestCaseSource(nameof(NullTestCases))]
         public void Move_Move(BoardLocation startingLocation, BoardLocation endingLocation)
         {
-            Assert.Throws<ArgumentNullException>(() => new Move(startingLocation, endingLocation));
+            Assert.Throws<ArgumentNullException>(() => new Move(startingLocation, endingLocation), "HACK HACK");
         }
 
         [TestCaseSource(nameof(EqualsTestCases))]
         public void Move_Equals(Move moveA, Move moveB, bool expectedResult)
         {
             // Act/Assert
-            Assert.IsTrue(_tempMove.Equals(moveA, moveB) == expectedResult, $"Result does not equal expected ({Move.ToString(moveA)} {(expectedResult ? "!=" : "==")} {Move.ToString(moveB)})");
+            Assert.That(_tempMove.Equals(moveA, moveB), Is.EqualTo(expectedResult), $"Result does not equal expected ({Move.ToString(moveA)} {(expectedResult ? "!=" : "==")} {Move.ToString(moveB)})");
         }
 
         [TestCaseSource(nameof(EqualsTestCases))]
@@ -72,7 +72,7 @@ namespace KnightSolverUnitTests
             }
 
             // Act/Assert
-            Assert.IsTrue(moveA.Equals(moveB) == expectedResult, $"Result does not equal expected ({Move.ToString(moveA)} {(expectedResult ? "!=" : "==")} {Move.ToString(moveB)})");
+            Assert.That(moveA.Equals(moveB), Is.EqualTo(expectedResult), $"Result does not equal expected ({Move.ToString(moveA)} {(expectedResult ? "!=" : "==")} {Move.ToString(moveB)})");
         }
 
         [Test]
