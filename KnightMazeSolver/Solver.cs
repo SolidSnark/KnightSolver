@@ -44,34 +44,11 @@ namespace KnightMazeSolver
 
         public List<List<IMove>> Solve(IBoard board, SolveType solveType)
         {
-            if (board.Width == 0 || board.Height == 0)
-            {
-                throw new Exception("Board must be intializzed.");
-            }
 
-            if (board.StartingLocation == null)
+            List<string> validationErrors;
+            if (!board.ValidateBoard(out validationErrors))
             {
-                throw new InvalidDataException("Invalid board data.  No starting location.");
-            }
-
-            if (board.StartingLocation == null)
-            {
-                throw new InvalidDataException("Invalid board data.  No ending location.");
-            }
-
-            if (!board.Knight.BoardLocation.Equals(board.StartingLocation))
-            {
-                throw new InvalidDataException("Invalid board data.  Invalid knight location.");
-            }
-
-            if (board[board.StartingLocation] == SquareColor.Void)
-            {
-                throw new InvalidDataException("Invalid board data.  Starting location is invalid.");
-            }
-
-            if (board[board.EndingLocation] == SquareColor.Void)
-            {
-                throw new InvalidDataException("Invalid board data.  Ending location is invalid.");
+                throw new InvalidDataException(string.Join("\n", validationErrors));
             }
 
             foreach (BoardLocation boardLocation in board.Knight.ValidMoves)

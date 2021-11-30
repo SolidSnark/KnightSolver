@@ -3,6 +3,7 @@ using Moq;
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.IO.Abstractions;
 
 using KnightMazeSolver;
@@ -120,7 +121,7 @@ namespace KnightSolverUnitTests
             ((Board)board).Width = (byte)width;
             ((Board)board).Height = (byte)height;
 
-            Assert.Throws<Exception>(() => solver.Solve(board, SolveType.Full), "Failed to throw an exception on uninitilized board");
+            Assert.Throws<InvalidDataException>(() => solver.Solve(board, SolveType.Full), "Failed to throw an exception on uninitilized board");
         }
 
         [Test]
@@ -131,9 +132,11 @@ namespace KnightSolverUnitTests
             IBoard board = new Board(knight);
             ((Board)board).Width = 5;
             ((Board)board).Height = 5;
+            ((Board)board)._boardData = new SquareColor[5, 5];
+
             board.EndingLocation = new BoardLocation(3, 3);
 
-            Assert.Throws<Exception>(() => solver.Solve(board, SolveType.Full), "Failed to throw an exception on missing start position");
+            Assert.Throws<InvalidDataException>(() => solver.Solve(board, SolveType.Full), "Failed to throw an exception on missing start position");
         }
 
         [Test]
@@ -144,9 +147,11 @@ namespace KnightSolverUnitTests
             IBoard board = new Board(knight);
             ((Board)board).Width = 5;
             ((Board)board).Height = 5;
+            ((Board)board)._boardData = new SquareColor[5, 5];
+
             board.StartingLocation = new BoardLocation(3, 3);
 
-            Assert.Throws<Exception>(() => solver.Solve(board, SolveType.Full), "Failed to throw an exception on missing end position");
+            Assert.Throws<InvalidDataException>(() => solver.Solve(board, SolveType.Full), "Failed to throw an exception on missing end position");
         }        
     }
 }
