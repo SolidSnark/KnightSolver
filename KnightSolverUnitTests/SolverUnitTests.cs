@@ -13,6 +13,15 @@ namespace KnightSolverUnitTests
     {
         private Mock<IFileSystem> _fileSystemMock = null;
 
+        public static IEnumerable<TestCaseData> NotInitializedTestCases
+        {
+            get
+            {
+                yield return new TestCaseData(5, 0);
+                yield return new TestCaseData(0, 5);
+            }
+        }
+
         [SetUp]
         public void Setup()
         {
@@ -101,5 +110,43 @@ namespace KnightSolverUnitTests
             Assert.That(solutions.Count, Is.EqualTo(1), "Unexpected number of solutions");
             Assert.That(solutions[0].Count, Is.EqualTo(41), "Solution has unexpected number of moves");
         }
+
+        [TestCaseSource(nameof(NotInitializedTestCases))]
+        public void Solver_Solve_UnitializedBoaard(int width, int height)
+        {
+            ISolver solver = new Solver();
+            IKnight knight = new Knight();
+            IBoard board = new Board(knight);
+            ((Board)board).Width = (byte)width;
+            ((Board)board).Height = (byte)height;
+
+            Assert.Throws<Exception>(() => solver.Solve(board, SolveType.Full), "Failed to throw an exception on uninitilized board");
+        }
+
+        [Test]
+        public void Solver_Solve_NoStartingPostition()
+        {
+            ISolver solver = new Solver();
+            IKnight knight = new Knight();
+            IBoard board = new Board(knight);
+            ((Board)board).Width = 5;
+            ((Board)board).Height = 5;
+            board.EndingLocation = new BoardLocation(3, 3);
+
+            Assert.Throws<Exception>(() => solver.Solve(board, SolveType.Full), "Failed to throw an exception on missing start position");
+        }
+
+        [Test]
+        public void Solver_Solve_NoEndingPostition()
+        {
+            ISolver solver = new Solver();
+            IKnight knight = new Knight();
+            IBoard board = new Board(knight);
+            ((Board)board).Width = 5;
+            ((Board)board).Height = 5;
+            board.StartingLocation = new BoardLocation(3, 3);
+
+            Assert.Throws<Exception>(() => solver.Solve(board, SolveType.Full), "Failed to throw an exception on missing end position");
+        }        
     }
 }

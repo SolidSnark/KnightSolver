@@ -187,8 +187,8 @@ namespace KnightSolverUnitTests
             Assert.That(board.Width, Is.EqualTo(5), "Width does not equal expected");
             Assert.That(board.Height, Is.EqualTo(5), "Height does not equal expected");
             Assert.That(board._boardData.Length, Is.EqualTo(5 * 5), "BoardData length does not equal expected");
-            Assert.True(board.StartingLocation.Equals(testStartingLocation), "Starting location does not equal expected");
-            Assert.True(board.EndingLocation.Equals(testEndingLocation), "Ending location does not equal expected");
+            Assert.True(testStartingLocation.Equals(board.StartingLocation), "Starting location does not equal expected");
+            Assert.True(testEndingLocation.Equals(board.EndingLocation), "Ending location does not equal expected");
             Assert.True(CompareBoards(5, 5, _knightMovesdBoardData, board._boardData), "BoardData does not equal expected");
         }
 
@@ -558,5 +558,7 @@ namespace KnightSolverUnitTests
 
             return true;
         }
+
+        // HACK HACK - Add unitialized tests
     }
 }

@@ -1,5 +1,4 @@
 ﻿using CommandLine;
-using CommandLine.Text;
 using Lamar;
 using MediatR;
 using MediatR.Pipeline;
@@ -42,7 +41,7 @@ namespace KnightSolverConsoleApp
                 var mediator = BuildContainer().GetInstance<IMediator>();
                 return await mediator.Send(command);
             }
-            catch (CommandLineParsingException e)
+            catch (CommandLineParsingException)
             {
                 return await Task.FromResult(1);
             }

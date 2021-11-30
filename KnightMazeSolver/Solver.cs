@@ -19,6 +19,7 @@ namespace KnightMazeSolver
 
         private int _movesEvaluated = 0;
         private int _longestChainEvaluated = 0;
+        private int _deadEndNodes = 0;
 
         public List<List<IMove>> Solve(string filename, SolveType solveType)
         {
@@ -43,7 +44,7 @@ namespace KnightMazeSolver
 
         public List<List<IMove>> Solve(IBoard board, SolveType solveType)
         {
-            if (board.Width == 0  || board.Height == 0)
+            if (board.Width == 0 || board.Height == 0)
             {
                 throw new Exception("Board must be intializzed.");
             }
@@ -125,12 +126,16 @@ namespace KnightMazeSolver
                 {
                     _solutions.Add(_currentMoves.ToList<IMove>());
                 }
-                
+
                 BackUpOneMove(board);
                 return true;
             }
 
-            if (EvaluateNextMoves(board, solveType) && solveType == SolveType.First)
+            if (board.Knight.ValidMoves.Count == 1)
+            {
+                _deadEndNodes++;
+            }
+            else if (EvaluateNextMoves(board, solveType) && solveType == SolveType.First)
             {
                 return true;
             }

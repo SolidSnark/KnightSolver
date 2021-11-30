@@ -73,6 +73,5 @@ namespace KnightSolverConsoleApp
                 Console.WriteLine(string.Empty);
             }
         }
-
     }
 }

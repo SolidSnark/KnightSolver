@@ -1,8 +1,12 @@
-﻿using System;
+﻿using FluentValidation;
+using FluentValidation.Results;
+
+using System;
+using System.Collections.Generic;
 using System.IO;
 
 namespace KnightMazeSolver
-{
+{    
     /// <summary>
     /// Represets a game board and contains data for all valid locations
     /// </summary>
@@ -18,6 +22,11 @@ namespace KnightMazeSolver
         /// </summary>
         byte Height { get; }
 
+        /// <summary>
+        /// HACK HACK
+        /// </summary>
+        byte MinimumBoardSize { get; }
+        
         /// <summary>
         /// The starting location for the maze and sets the board location to valid
         /// </summary>
@@ -84,6 +93,8 @@ namespace KnightMazeSolver
         /// <param name="boardLocation">The location to test</param>
         /// <returns>True if the location is both within the bounds of the current board and a valid board square</returns>
         bool IsValidTargetSquare(IBoardLocation boardLocation);
+
+        bool ValidateBoard(out List<string> messages);
     }
 
     public class Board : IBoard
@@ -95,7 +106,9 @@ namespace KnightMazeSolver
         internal SquareColor[,] _boardData = null;
 
         public byte Width { get; internal set; } = 0;
-        public byte Height { get; internal set; } = 0;        
+        public byte Height { get; internal set; } = 0;
+        public byte MinimumBoardSize { get; } = 5;
+
         public IKnight Knight { get; } = null;
         
         public SquareColor this[byte x, byte y]
@@ -107,6 +120,11 @@ namespace KnightMazeSolver
                     throw new ArgumentOutOfRangeException($"Location ({x}, {y} Out of Range");
                 }
 
+                if (_boardData == null)
+                {
+                    throw new NullReferenceException($"Invalid board data.  Board data is uninitilized");
+                }
+
                 return _boardData[x - 1, y - 1];
             }
             set
@@ -114,6 +132,11 @@ namespace KnightMazeSolver
                 if (!IsSquareInBounds(new BoardLocation(x, y)))
                 {
                     throw new ArgumentOutOfRangeException($"Location ({x}, {y} Out of Range");
+                }
+
+                if (_boardData == null)
+                {
+                    throw new NullReferenceException($"Invalid board data.  Board data is uninitilized");
                 }
 
                 _boardData[x - 1, y - 1]  = value;
@@ -150,6 +173,11 @@ namespace KnightMazeSolver
                     throw new ArgumentException($"Starting Location ({value.X},{value.Y}) cannot equal ending location");
                 }
 
+                if (_boardData == null)
+                {
+                    throw new NullReferenceException($"Invalid board data.  Board data is uninitilized");
+                }
+
                 this[value] = GetSquareColor(value);                
                 _startingLocation = value;
             }
@@ -171,6 +199,11 @@ namespace KnightMazeSolver
                 if (value.Equals(StartingLocation))
                 {
                     throw new ArgumentException($"Ending Location ({value.X},{value.Y}) cannot equal starting location");
+                }
+
+                if (_boardData == null)
+                {
+                    throw new NullReferenceException($"Invalid board data.  Board data is uninitilized");
                 }
 
                 this[value] = GetSquareColor(value); 
@@ -296,6 +329,25 @@ namespace KnightMazeSolver
             }
 
             return this[boardLocation] != SquareColor.Void;
+        }
+        public bool ValidateBoard(out List<string> messages)
+        {
+            messages = new List<string>();
+
+            BoardValidator validator = new BoardValidator();
+            ValidationResult results = validator.Validate(this);
+
+            if (results.IsValid)
+            {
+                return true;
+            }
+
+            foreach (ValidationFailure error in results.Errors)
+            {
+                messages.Add(error.ErrorMessage);
+            }
+
+            return false;
         }
 
         private SquareColor GetSquareColor(IBoardLocation boardLocation)
