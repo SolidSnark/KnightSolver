@@ -57,7 +57,7 @@ namespace KnightSolverConsoleApp
 
             if (request.OutputBoard)
             {
-                //textRenderer.RenderBoard(board);
+                textRenderer.RenderBoard(board);
             }
 
             textRenderer.RenderSolutions(solutions);

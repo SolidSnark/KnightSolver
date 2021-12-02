@@ -5,13 +5,6 @@ using System.Linq;
 
 namespace KnightMazeSolver
 {
-    public interface ISolver
-    {
-        List<List<IMove>> Solve(string filename, SolveType solveType);
-        List<List<IMove>> Solve(IBoard board, SolveType solveType);
-        List<List<IMove>> Solve(string[] rows, SolveType solveType);
-    }
-
     public class Solver : ISolver
     {
         internal List<IMove> _currentMoves = new List<IMove>();

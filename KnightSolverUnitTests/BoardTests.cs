@@ -447,6 +447,17 @@ namespace KnightSolverUnitTests
         }
 
         [Test]
+        public void Board_SetSquareState_BoardDataNull()
+        {
+            Board board = (Board)CreateBoard(5, 5, _checkerboardBoardData);
+            board._boardData = null;
+            BoardLocation boardLocation = new BoardLocation(3, 3);
+
+            Assert.Throws<NullReferenceException>(() => board[boardLocation] = SquareColor.White,
+                $"Failed to throw Exception for null board data");
+        }
+
+        [Test]
         public void Board_GetSquareData_Success()
         {
             Board board = (Board)CreateBoard(5, 5, _knightMovesdBoardData);
@@ -464,6 +475,18 @@ namespace KnightSolverUnitTests
             SquareColor sc = SquareColor.Void;
             Assert.Throws<ArgumentOutOfRangeException>(() => sc = board[boardLocation],
                 $"Failed to throw Exception for out of range location ({boardLocation.X},{boardLocation.Y})");
+        }
+
+        [Test]
+        public void Board_GetSquareState_BoardDataNull()
+        {
+            Board board = (Board)CreateBoard(5, 5, _knightMovesdBoardData);
+            board._boardData = null;
+            BoardLocation boardLocation = new BoardLocation(3, 3);
+
+            SquareColor sc = SquareColor.Void;
+            Assert.Throws<NullReferenceException>(() => sc = board[boardLocation],
+                $"Failed to throw Exception for null board data");
         }
 
         [TestCaseSource(nameof(InRangeTestCases))]

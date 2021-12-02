@@ -1,5 +1,4 @@
-﻿using FluentValidation;
-using FluentValidation.Results;
+﻿using FluentValidation.Results;
 
 using System;
 using System.Collections.Generic;
@@ -8,7 +7,8 @@ using System.IO;
 namespace KnightMazeSolver
 {
     public class Board : IBoard
-    {       
+    {
+        #region Properties
         internal IBoardLocation _startingLocation = null;
         internal IBoardLocation _endingLocation = null;
         internal SquareColor[,] _boardData = null;
@@ -37,7 +37,9 @@ namespace KnightMazeSolver
             }
             set
             {
-                if (!IsSquareInBounds(new BoardLocation(x, y)))
+                BoardLocation boardLocation = new BoardLocation(x, y);
+
+                if (!IsSquareInBounds(boardLocation))
                 {
                     throw new ArgumentOutOfRangeException($"Location ({x}, {y} Out of Range");
                 }
@@ -47,7 +49,7 @@ namespace KnightMazeSolver
                     throw new NullReferenceException($"Invalid board data.  Board data is uninitilized");
                 }
 
-                _boardData[x - 1, y - 1]  = value;
+                _boardData[x - 1, y - 1]  = value == SquareColor.Checkered ? GetSquareColor(boardLocation) : value;
             }
         }
 
@@ -118,9 +120,13 @@ namespace KnightMazeSolver
                 _endingLocation = value;
             }
         }
+        #endregion // Properties
 
+        #region Constructors
         public Board(IKnight knight) => Knight = knight;
+        #endregion // Constructors
 
+        #region Public Methods
         public void Initialize(byte width, byte height)
         {
             if (width < MinimumBoardSize || height < MinimumBoardSize)
@@ -178,6 +184,7 @@ namespace KnightMazeSolver
 
             Knight.Initialize(this);
         }
+        #endregion // Public Methods
 
         private void ProcessRow(string row, byte index)
         {
@@ -234,6 +241,7 @@ namespace KnightMazeSolver
 
             return this[boardLocation] != SquareColor.Void;
         }
+
         public bool ValidateBoard(out List<string> messages)
         {
             messages = new List<string>();

@@ -3,7 +3,7 @@
 namespace KnightMazeSolver
 {
     /// <summary>
-    /// Represets a game board and contains data for all valid locations
+    /// Represets a game board and contains data for the board state
     /// </summary>
     public interface IBoard
     {
@@ -18,7 +18,7 @@ namespace KnightMazeSolver
         byte Height { get; }
 
         /// <summary>
-        /// HACK HACK
+        /// The minimum width/height supported
         /// </summary>
         byte MinimumBoardSize { get; }
 
@@ -59,13 +59,14 @@ namespace KnightMazeSolver
         /// Initializes board with requested width and height and creates the 
         /// board data
         /// </summary>
-        /// <param name="width">The requested width of the board. The minimum value is 5.</param>
-        /// <param name="height">The requested height of the board. The minimum value is 5.</param>
+        /// <param name="width">The requested width of the board. The minimum value is in the property MinimumBoardSize.</param>
+        /// <param name="height">The requested height of the board. The minimum value is in the property MinimumBoardSize.</param>
         void Initialize(byte width, byte height);
 
         /// <summary>
         /// Initializes the board with an array of strings representing board rows.
-        /// There must be at least 5 rows, at least 5 characters wide and all must be the same length.
+        /// There must be at least MinimumBoardSize rows, at least MinimumBoardSize 
+        /// characters wide and all must be the same length.
         /// The key is as follows:
         /// . = Void, invalid board square
         /// X - Valid board square
@@ -89,6 +90,11 @@ namespace KnightMazeSolver
         /// <returns>True if the location is both within the bounds of the current board and a valid board square</returns>
         bool IsValidTargetSquare(IBoardLocation boardLocation);
 
+        /// <summary>
+        /// Validates the board for correctness and returns a list of error messages if it fails
+        /// </summary>
+        /// <param name="messages">A list of validation error messages</param>
+        /// <returns>True if the board is valid</returns>
         bool ValidateBoard(out List<string> messages);
     }
 }

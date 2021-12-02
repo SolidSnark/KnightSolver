@@ -27,7 +27,7 @@ namespace KnightMazeSolver
 
         private bool ValidateEndingLocation(Board board)
         {
-            return board.IsValidTargetSquare(board?.EndingLocation);
+            return board.IsValidTargetSquare(board.EndingLocation);
         }
 
         private bool ValidatesStartingNotEqualEndingLocation(Board board)

@@ -4,7 +4,8 @@
     {
         Void,
         White,
-        Black
+        Black,
+        Checkered
     }
 
     public enum SolveType
