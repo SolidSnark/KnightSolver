@@ -14,14 +14,23 @@ namespace KnightSolverUnitTests
         {
             get
             {
+                yield return new TestCaseData(new BoardLocation(3, 4), (BoardLocation)null, false);
                 yield return new TestCaseData(new BoardLocation(1, 2), new BoardLocation(2, 3), false);
-                yield return new TestCaseData(new BoardLocation(1, 2), null, false);
-                yield return new TestCaseData(null, new BoardLocation(1, 2), false);
+                yield return new TestCaseData(new BoardLocation(1, 2), (BoardLocation)null, false);
+                yield return new TestCaseData(new BoardLocation(1, 2), new BoardLocation(1, 2), true);
                 yield return new TestCaseData(new BoardLocation(2, 3), new BoardLocation(2, 3), true);
-                yield return new TestCaseData(null, null, true);
             }
         }
 
+        public static IEnumerable<TestCaseData> AltEqualsTestCases
+        {
+            get
+            {
+                yield return new TestCaseData(new BoardLocation(1, 2), new BoardLocation(2, 3), false);
+                yield return new TestCaseData((BoardLocation)null, new BoardLocation(1, 2), false);
+                yield return new TestCaseData(new BoardLocation(2, 3), new BoardLocation(2, 3), true);
+            }
+        }
 
         [OneTimeSetUp]
         public void Init()
@@ -38,14 +47,11 @@ namespace KnightSolverUnitTests
         [TestCaseSource(nameof(EqualsTestCases))]
         public void BoardLocation_Equals_Equal(BoardLocation boardLocationA, BoardLocation boardLocationB, bool expectedValue)
         {
-            if (boardLocationA == null) // This is a hack.  NUnit TestCaseSource was giving me fits.  This is a workaround.
-                return;
-
             // Act/Assert
             Assert.That(boardLocationA.Equals(boardLocationB), Is.EqualTo(expectedValue), $"Result does not equal expected {BoardLocation.ToString(boardLocationA)} != {BoardLocation.ToString(boardLocationB)}");            
         }
         
-        [TestCaseSource(nameof(EqualsTestCases))]
+        [TestCaseSource(nameof(AltEqualsTestCases))]
         public void BoardLocation_AltEquals_Equal(BoardLocation boardLocationA, BoardLocation boardLocationB, bool expectedValue)
         {
             // Act/Assert

@@ -1,4 +1,4 @@
-﻿namespace KnightSolverConsoleApp
+﻿namespace KnightSolverConsoleApp.Commands
 {
 	public interface ICommand
 	{

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 using KnightMazeSolver;
 
-namespace KnightSolverConsoleApp
+namespace KnightSolverConsoleApp.Commands
 {
     [Verb("solve", HelpText = "Solve the given maze and output the soluton(s).\n\n" +
         "There must be at least 5 rows, at least 5 characters wide and all must be the same length.\n" +
@@ -27,7 +27,7 @@ namespace KnightSolverConsoleApp
         [Option('f', "Filename", Required = true, HelpText = "The name of the file containing the maze")]
         public string Filename { get; set; }
 
-        [Option('b', "OutputBoard", Default = "", Required = false, HelpText = "Display the board with the solution")]
+        [Option('b', "OutputBoard", Default = false, Required = false, HelpText = "Display the board with the solution")]
         public bool OutputBoard { get; set; }
 
         [Option('o', "OutputFilename", Default = "", Required = false, HelpText = "The file to output the solution to")]
@@ -51,16 +51,16 @@ namespace KnightSolverConsoleApp
                 solveType = SolveType.Shortest;
             }
 
-            List<List<IMove>> solutions = solver.Solve(request.Filename, solveType);
+            ISolveResults results = solver.Solve(request.Filename, solveType);
 
             ITextRenderer textRenderer = new TextRenderer();
 
             if (request.OutputBoard)
             {
-                textRenderer.RenderBoard(board);
+                textRenderer.RenderBoard(results.Board);
             }
 
-            textRenderer.RenderSolutions(solutions);
+            textRenderer.RenderSolutions(results.Solutions);
 
             return await Task.FromResult(0);
         }

@@ -12,9 +12,34 @@ namespace KnightMazeSolver
 
         private int _movesEvaluated = 0;
         private int _longestChainEvaluated = 0;
-        private int _deadEndNodes = 0;
+        private int _shortestSolutionFound = int.MaxValue;
+        private int _longestSolutionFound = int.MinValue;
 
-        public List<List<IMove>> Solve(string filename, SolveType solveType)
+        public ISolveResults Solve(IBoard board, SolveType solveType)
+        {
+
+            List<string> validationErrors;
+            if (!board.ValidateBoard(out validationErrors))
+            {
+                throw new InvalidDataException(string.Join("\n", validationErrors));
+            }
+
+            foreach (BoardLocation boardLocation in board.Knight.ValidMoves)
+            {
+                Move(board, boardLocation, solveType);
+            }
+
+            SolveResults results = new SolveResults { Board = board, 
+                                                    LongestChainEvaluated = _longestChainEvaluated, 
+                                                    MovesEvaluated = _movesEvaluated, 
+                                                    ShortestSolutionFound = _solutions.Count > 0 ? _shortestSolutionFound : 0,
+                                                    LongestSolutionFound = _solutions.Count > 0 ? _longestSolutionFound : 0,
+                                                    Solutions = _solutions.OrderBy(m => m.Count).ToList() };
+
+            return results;            
+        }
+
+        public ISolveResults Solve(string filename, SolveType solveType)
         {
             string[] rows = null;
 
@@ -35,24 +60,7 @@ namespace KnightMazeSolver
             return Solve(rows, solveType);
         }
 
-        public List<List<IMove>> Solve(IBoard board, SolveType solveType)
-        {
-
-            List<string> validationErrors;
-            if (!board.ValidateBoard(out validationErrors))
-            {
-                throw new InvalidDataException(string.Join("\n", validationErrors));
-            }
-
-            foreach (BoardLocation boardLocation in board.Knight.ValidMoves)
-            {
-                Move(board, boardLocation, solveType);
-            }
-
-            return _solutions.OrderBy(m => m.Count).ToList();
-        }
-
-        public List<List<IMove>> Solve(string[] rows, SolveType solveType)
+        public ISolveResults Solve(string[] rows, SolveType solveType)
         {
             IKnight knight = new Knight();
             IBoard board = new Board(knight);
@@ -82,41 +90,45 @@ namespace KnightMazeSolver
 
             if (newBoardLocation.Equals(board.EndingLocation))
             {
-                if (solveType == SolveType.Shortest)
-                {
-                    bool bestSolution = _currentMoves.Count < (_solutions.Count > 0 ? _solutions[0].Count : int.MaxValue);
-
-                    if (bestSolution)
-                    {
-                        _solutions.Clear();
-                        _solutions.Add(_currentMoves.ToList<IMove>());
-                    }
-                }
-                else
-                {
-                    _solutions.Add(_currentMoves.ToList<IMove>());
-                }
-
+                EvaluateSolution(solveType);
                 BackUpOneMove(board);
                 return true;
             }
 
-            if (board.Knight.ValidMoves.Count == 1)
-            {
-                _deadEndNodes++;
-            }
-            else if (EvaluateNextMoves(board, solveType) && solveType == SolveType.First)
-            {
+            if (EvaluateNextMoves(board, solveType) && solveType == SolveType.First)
+            {                
                 return true;
             }
 
             BackUpOneMove(board);
-
             return false;
         }
 
-        private bool EvaluateNextMoves(IBoard board, SolveType solveType)
+        private void EvaluateSolution(SolveType solveType)
         {
+            bool bestSolution = _currentMoves.Count < (_solutions.Count > 0 ? _solutions[0].Count : int.MaxValue);
+            bool worstSolution = _currentMoves.Count > (_solutions.Count > 0 ? _solutions[0].Count : int.MinValue);
+
+            if (bestSolution)
+            {
+                _shortestSolutionFound = _currentMoves.Count;
+            }
+
+            if (worstSolution)
+            {
+                _longestSolutionFound = _currentMoves.Count;
+            }
+
+            if (solveType == SolveType.Shortest && bestSolution)
+            {
+                _solutions.Clear();
+            }
+            
+            _solutions.Add(_currentMoves.ToList<IMove>());
+        }
+
+        private bool EvaluateNextMoves(IBoard board, SolveType solveType)
+        {            
             foreach (BoardLocation targetLocation in board.Knight.ValidMoves)
             {
                 if (targetLocation.Equals(board.StartingLocation) ||

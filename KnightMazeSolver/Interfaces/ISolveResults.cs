@@ -2,12 +2,13 @@
 
 namespace KnightMazeSolver
 {
-    interface ISolveResults
+    public interface ISolveResults
     {
-        SquareColor[,] Board { get; }
+        IBoard Board { get; }
         List<List<IMove>> Solutions { get; }
-        int[] NeighborCount { get; }
         int MovesEvaluated { get; }
         int LongestChainEvaluated { get; }
+        int ShortestSolutionFound { get; }
+        int LongestSolutionFound { get; }
     }
 }

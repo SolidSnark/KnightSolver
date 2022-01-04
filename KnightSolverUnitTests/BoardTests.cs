@@ -62,11 +62,11 @@ namespace KnightSolverUnitTests
 
         private static readonly SquareColor[,] _checkerboardBoardData = new SquareColor[5, 5]
         {
-                { SquareColor.White, SquareColor.Black, SquareColor.White, SquareColor.Black, SquareColor.White},
-                { SquareColor.Black, SquareColor.White, SquareColor.Black, SquareColor.White, SquareColor.Black},
-                { SquareColor.White, SquareColor.Black, SquareColor.White, SquareColor.Black, SquareColor.White},
-                { SquareColor.Black, SquareColor.White, SquareColor.Black, SquareColor.White, SquareColor.Black},
-                { SquareColor.White, SquareColor.Black, SquareColor.White, SquareColor.Black, SquareColor.White}
+            { SquareColor.White, SquareColor.Black, SquareColor.White, SquareColor.Black, SquareColor.White},
+            { SquareColor.Black, SquareColor.White, SquareColor.Black, SquareColor.White, SquareColor.Black},
+            { SquareColor.White, SquareColor.Black, SquareColor.White, SquareColor.Black, SquareColor.White},
+            { SquareColor.Black, SquareColor.White, SquareColor.Black, SquareColor.White, SquareColor.Black},
+            { SquareColor.White, SquareColor.Black, SquareColor.White, SquareColor.Black, SquareColor.White}
         };
 
         private static readonly SquareColor[,] _knightMovesdBoardData = new SquareColor[5, 5]
@@ -82,6 +82,88 @@ namespace KnightSolverUnitTests
         public void Setup()
         {
             _knightMock = new Mock<IKnight>(MockBehavior.Strict);
+        }
+
+        [TestCaseSource(nameof(InRangeTestCases))]
+        public void Board_SetSquareStateWhite_Success(IBoardLocation boardLocation)
+        {
+            Board board = (Board)CreateBoard(5, 5, _emptyBoardData);
+
+            board[boardLocation] = SquareColor.White;
+            Assert.That(board._boardData[boardLocation.X - 1, boardLocation.Y - 1], Is.EqualTo(SquareColor.White),
+                $"Failed to set square at ({boardLocation.X},{boardLocation.Y})");
+        }
+
+        [TestCaseSource(nameof(InRangeTestCases))]
+        public void Board_SetSquareStateBlack_Success(IBoardLocation boardLocation)
+        {
+            Board board = (Board)CreateBoard(5, 5, _emptyBoardData);
+
+            board[boardLocation] = SquareColor.Black;
+            Assert.That(board._boardData[boardLocation.X - 1, boardLocation.Y - 1], Is.EqualTo(SquareColor.Black),
+                $"Failed to set square at ({boardLocation.X},{boardLocation.Y})");
+        }
+
+        [TestCaseSource(nameof(InRangeTestCases))]
+        public void Board_SetSquareStateVoid_Success(IBoardLocation boardLocation)
+        {
+            Board board = (Board)CreateBoard(5, 5, _checkerboardBoardData);
+
+            board[boardLocation] = SquareColor.White;
+            Assert.That(board._boardData[boardLocation.X - 1, boardLocation.Y - 1], Is.EqualTo(SquareColor.White),
+                $"Failed to set square at ({boardLocation.X},{boardLocation.Y})");
+        }
+
+        [TestCaseSource(nameof(OutOfRangeTestCases))]
+        public void Board_SetSquareState_OutOfRange(IBoardLocation boardLocation)
+        {
+            Board board = (Board)CreateBoard(5, 5, _checkerboardBoardData);
+
+            Assert.Throws<ArgumentOutOfRangeException>(() => board[boardLocation] = SquareColor.White,
+                $"Failed to throw Exception for out of range location ({boardLocation.X},{boardLocation.Y})");
+        }
+
+        [Test]
+        public void Board_SetSquareState_BoardDataNull()
+        {
+            Board board = (Board)CreateBoard(5, 5, _checkerboardBoardData);
+            board._boardData = null;
+            BoardLocation boardLocation = new BoardLocation(3, 3);
+
+            Assert.Throws<NullReferenceException>(() => board[boardLocation] = SquareColor.White,
+                $"Failed to throw Exception for null board data");
+        }
+
+        [Test]
+        public void Board_GetSquareData_Success()
+        {
+            Board board = (Board)CreateBoard(5, 5, _knightMovesdBoardData);
+
+            Assert.That(board[1, 1], Is.EqualTo(SquareColor.Void), "BoardData does not equal expected (SquareColor.Void)");
+            Assert.That(board[4, 5], Is.EqualTo(SquareColor.Black), "BoardData does not equal expected (SquareColor.Black)");
+            Assert.That(board[3, 3], Is.EqualTo(SquareColor.White), "BoardData does not equal expected (SquareColor.White)");
+        }
+
+        [TestCaseSource(nameof(OutOfRangeTestCases))]
+        public void Board_GetSquareState_OutOfRange(IBoardLocation boardLocation)
+        {
+            Board board = (Board)CreateBoard(5, 5, _knightMovesdBoardData);
+
+            SquareColor sc = SquareColor.Void;
+            Assert.Throws<ArgumentOutOfRangeException>(() => sc = board[boardLocation],
+                $"Failed to throw Exception for out of range location ({boardLocation.X},{boardLocation.Y})");
+        }
+
+        [Test]
+        public void Board_GetSquareState_BoardDataNull()
+        {
+            Board board = (Board)CreateBoard(5, 5, _knightMovesdBoardData);
+            board._boardData = null;
+            BoardLocation boardLocation = new BoardLocation(3, 3);
+
+            SquareColor sc = SquareColor.Void;
+            Assert.Throws<NullReferenceException>(() => sc = board[boardLocation],
+                $"Failed to throw Exception for null board data");
         }
 
         [TestCaseSource(nameof(InRangeTestCases))]
@@ -405,88 +487,6 @@ namespace KnightSolverUnitTests
             };
 
             Assert.Throws<InvalidDataException>(() => board.LoadStateData(rows), "Too many ending postitions in board data failed to cause Exeception");
-        }
-
-        [TestCaseSource(nameof(InRangeTestCases))]
-        public void Board_SetSquareStateWhite_Success(IBoardLocation boardLocation)
-        {
-            Board board = (Board)CreateBoard(5, 5, _emptyBoardData);
-            
-            board[boardLocation] = SquareColor.White;
-            Assert.That(board._boardData[boardLocation.X - 1, boardLocation.Y - 1], Is.EqualTo(SquareColor.White),
-                $"Failed to set square at ({boardLocation.X},{boardLocation.Y})");
-        }
-
-        [TestCaseSource(nameof(InRangeTestCases))]
-        public void Board_SetSquareStateBlack_Success(IBoardLocation boardLocation)
-        {
-            Board board = (Board)CreateBoard(5, 5, _emptyBoardData);
-
-            board[boardLocation] = SquareColor.Black;
-            Assert.That(board._boardData[boardLocation.X - 1, boardLocation.Y - 1], Is.EqualTo(SquareColor.Black),
-                $"Failed to set square at ({boardLocation.X},{boardLocation.Y})");
-        }
-
-        [TestCaseSource(nameof(InRangeTestCases))]
-        public void Board_SetSquareStateVoid_Success(IBoardLocation boardLocation)
-        {
-            Board board = (Board)CreateBoard(5, 5, _checkerboardBoardData);
-
-            board[boardLocation] = SquareColor.White;
-            Assert.That(board._boardData[boardLocation.X - 1, boardLocation.Y - 1], Is.EqualTo(SquareColor.White),
-                $"Failed to set square at ({boardLocation.X},{boardLocation.Y})");
-        }
-
-        [TestCaseSource(nameof(OutOfRangeTestCases))]
-        public void Board_SetSquareState_OutOfRange(IBoardLocation boardLocation)
-        {
-            Board board = (Board)CreateBoard(5, 5, _checkerboardBoardData);
-
-            Assert.Throws<ArgumentOutOfRangeException>(() => board[boardLocation] = SquareColor.White,
-                $"Failed to throw Exception for out of range location ({boardLocation.X},{boardLocation.Y})");
-        }
-
-        [Test]
-        public void Board_SetSquareState_BoardDataNull()
-        {
-            Board board = (Board)CreateBoard(5, 5, _checkerboardBoardData);
-            board._boardData = null;
-            BoardLocation boardLocation = new BoardLocation(3, 3);
-
-            Assert.Throws<NullReferenceException>(() => board[boardLocation] = SquareColor.White,
-                $"Failed to throw Exception for null board data");
-        }
-
-        [Test]
-        public void Board_GetSquareData_Success()
-        {
-            Board board = (Board)CreateBoard(5, 5, _knightMovesdBoardData);
-
-            Assert.That(board[1, 1], Is.EqualTo(SquareColor.Void), "BoardData does not equal expected (SquareColor.Void)");
-            Assert.That(board[4, 5], Is.EqualTo(SquareColor.Black), "BoardData does not equal expected (SquareColor.Black)");
-            Assert.That(board[3, 3], Is.EqualTo(SquareColor.White), "BoardData does not equal expected (SquareColor.White)");
-        }
-
-        [TestCaseSource(nameof(OutOfRangeTestCases))]
-        public void Board_GetSquareState_OutOfRange(IBoardLocation boardLocation)
-        {
-            Board board = (Board)CreateBoard(5, 5, _knightMovesdBoardData);
-
-            SquareColor sc = SquareColor.Void;
-            Assert.Throws<ArgumentOutOfRangeException>(() => sc = board[boardLocation],
-                $"Failed to throw Exception for out of range location ({boardLocation.X},{boardLocation.Y})");
-        }
-
-        [Test]
-        public void Board_GetSquareState_BoardDataNull()
-        {
-            Board board = (Board)CreateBoard(5, 5, _knightMovesdBoardData);
-            board._boardData = null;
-            BoardLocation boardLocation = new BoardLocation(3, 3);
-
-            SquareColor sc = SquareColor.Void;
-            Assert.Throws<NullReferenceException>(() => sc = board[boardLocation],
-                $"Failed to throw Exception for null board data");
         }
 
         [TestCaseSource(nameof(InRangeTestCases))]

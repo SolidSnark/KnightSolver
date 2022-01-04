@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 using KnightMazeSolver;
 
-namespace KnightSolverConsoleApp
+namespace KnightSolverConsoleApp.Commands
 {
     [Verb("DisplayBoard", HelpText = "Output the supplied maze")]
     public class DisplayBoardOptions : IRequest<int>

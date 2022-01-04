@@ -9,14 +9,14 @@ namespace KnightSolverConsoleApp
 {
     interface ITextRenderer
     {
-        void RenderBoard(Board board, bool monochrome = false);
+        void RenderBoard(IBoard board, bool monochrome = false);
         void RenderSolution(List<IMove> solution);
         void RenderSolutions(List<List<IMove>> solutions);
     }
 
     public class TextRenderer : ITextRenderer
     {
-        public void RenderBoard(Board board, bool monochrome = false)
+        public void RenderBoard(IBoard board, bool monochrome = false)
         {
             char blackSquareChar = monochrome ? 'X' : 'B';
             char whiteSquareChar = monochrome ? 'X' : 'W';
@@ -65,10 +65,17 @@ namespace KnightSolverConsoleApp
 
         public void RenderSolutions(List<List<IMove>> solutions)
         {
-            int solutionCount = 1;
+            if (solutions.Count == 0)
+            {
+                Console.WriteLine("No solutions found.");
+                return;
+            }
+
+            int solutionIndex = 1;
             foreach (List<IMove> solution in solutions)
             {
-                Console.WriteLine($"Solution {solutionCount} of {solutions.Count}");
+                string plural = (solution.Count > 1) ? "s" : string.Empty;
+                Console.WriteLine($"Solution {solutionIndex} of {solutions.Count} - {solution.Count} move{plural}");
                 RenderSolution(solution);
                 Console.WriteLine(string.Empty);
             }
